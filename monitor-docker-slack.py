@@ -129,6 +129,7 @@ if __name__ == '__main__':
         (status, err_msg) = monitor_docker_slack("/var/run/docker.sock", white_pattern_list)
         if msg_prefix != "":
             err_msg = "%s\n%s" % (msg_prefix, err_msg)
+            last_error_msg = err_msg
         print("%s: %s" % (status, err_msg))
         if last_error_msg != err_msg:
           has_send_error_alert = False
@@ -137,7 +138,7 @@ if __name__ == '__main__':
                 r = requests.post(slack_webhook_url, data=str({"text": err_msg}))
                 has_send_error_alert = False
         else:
-            if has_send_error_alert:
+            if not has_send_error_alert:
                 r = requests.post(slack_webhook_url, data=str({"text": err_msg}))
                 # avoid send alerts over and over again
                 has_send_error_alert = True
