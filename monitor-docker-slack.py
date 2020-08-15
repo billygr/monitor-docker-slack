@@ -123,11 +123,13 @@ if __name__ == '__main__':
         print("%s: %s" % (status, err_msg))
         if status == "OK":
             if has_send_error_alert is True:
-                requests.post(slack_webhook_url, data={"text": err_msg})
+                r = requests.post(slack_webhook_url, data={"text": err_msg})
                 has_send_error_alert = False
+                print(r)
         else:
             if has_send_error_alert is False:
-                requests.post(slack_webhook_url, data={"text": err_msg})
+                r = requests.post(slack_webhook_url, data={"text": err_msg})
+                print(r)
                 # avoid send alerts over and over again
                 has_send_error_alert = True
         time.sleep(check_interval)
