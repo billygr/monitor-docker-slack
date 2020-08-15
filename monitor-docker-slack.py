@@ -46,6 +46,10 @@ def get_stopped_containers(container_list):
     return [container for container in container_list if 'Exited' in container[1]]
 
 
+def get_restarting_containers(container_list):
+    return [container for container in container_list if 'Restarting' in container[1]]
+
+
 def get_unhealthy_containers(container_list):
     return [container for container in container_list if 'unhealthy' in container[1]]
 
@@ -78,18 +82,22 @@ def monitor_docker_slack(docker_sock_file, white_pattern_list):
     container_list = list_containers_by_sock(docker_sock_file)
     stopped_container_list = get_stopped_containers(container_list)
     unhealthy_container_list = get_unhealthy_containers(container_list)
+    restarting_container_list = get_restarting_containers(container_list)
 
     stopped_container_list = containers_remove_by_name_pattern(stopped_container_list, white_pattern_list)
     unhealthy_container_list = containers_remove_by_name_pattern(unhealthy_container_list, white_pattern_list)
+    restarting_container_list = containers_remove_by_name_pattern(restarting_container_list, white_pattern_list)
 
     err_msg = ""
     if len(stopped_container_list) != 0:
         err_msg = "Detected Stopped Containers: \n%s\n%s" % (container_list_to_str(stopped_container_list), err_msg)
     if len(unhealthy_container_list) != 0:
         err_msg = "Detected Unhealthy Containers: \n%s\n%s" % (container_list_to_str(unhealthy_container_list), err_msg)
+    if len(restarting_container_list) != 0:
+        err_msg = "Detected Restarting Containers: \n%s\n%s" % (container_list_to_str(restarting_container_list), err_msg)
 
     if err_msg == "":
-        return "OK", "OK: detect no stopped or unhealthy containers"
+        return "OK", "OK: detect no stopped, restarting or unhealthy containers"
     else:
         return "ERROR", err_msg
 
@@ -116,17 +124,20 @@ if __name__ == '__main__':
 
 
     has_send_error_alert = False
+    last_error_msg = ""
     while True:
         (status, err_msg) = monitor_docker_slack("/var/run/docker.sock", white_pattern_list)
         if msg_prefix != "":
             err_msg = "%s\n%s" % (msg_prefix, err_msg)
         print("%s: %s" % (status, err_msg))
+        if last_error_msg != err_msg:
+          has_send_error_alert = False
         if status == "OK":
-            if has_send_error_alert is True:
+            if has_send_error_alert:
                 r = requests.post(slack_webhook_url, data=str({"text": err_msg}))
                 has_send_error_alert = False
         else:
-            if has_send_error_alert is False:
+            if has_send_error_alert:
                 r = requests.post(slack_webhook_url, data=str({"text": err_msg}))
                 # avoid send alerts over and over again
                 has_send_error_alert = True
