@@ -26,8 +26,9 @@ LABEL maintainer="Rafael Sena"
 
 USER root
 WORKDIR /
-ADD monitor-docker-slack.py /monitor-docker-slack.py
-ADD monitor-docker-slack.sh /monitor-docker-slack.sh
+COPY ./monitor-docker-slack.py ./monitor-docker-slack.py
+COPY ./monitor-docker-slack.sh ./monitor-docker-slack.sh
+COPY ./requirements.txt ./requirements.txt 
 
 RUN chmod o+x /*.sh && chmod o+x /*.py && \
     pip install -r requirements.txt && \
