@@ -3,7 +3,6 @@ services:
   monitor-docker-slack:
     container_name: monitor-docker-slack
     image: rafahsena/monitor-docker-slack:latest
-    build: ./
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
     environment:
