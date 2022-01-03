@@ -24,8 +24,7 @@ Read more: https://www.dennyzhang.com/docker_monitor
 
 ```
 export SLACK_CHANNEL="#XXX"
-export SLACK_USERNAME="XXX"
-export SLACK_TOKEN="xoxp-XXX-XXX-XXX-XXXXXXXX"
+export SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/..."
 export MSG_PREFIX="Monitoring On XX.XX.XX.XX"
 ```
 
@@ -38,8 +37,8 @@ docker stop $container_name; docker rm "$container_name"
 # Start container to monitor docker healthcheck status
 docker run -v /var/run/docker.sock:/var/run/docker.sock \
    -t -d -h $container_name --name $container_name \
-   -e SLACK_CHANNEL="$SLACK_CHANNEL" -e SLACK_USERNAME="$SLACK_USERNAME" \
-   -e SLACK_TOKEN="$SLACK_TOKEN" -e MSG_PREFIX="$MSG_PREFIX" \
+   -e SLACK_CHANNEL="$SLACK_CHANNEL" \
+   -e SLACK_WEBHOOK_URL: "$SLACK_WEBHOOK_URL" -e MSG_PREFIX="$MSG_PREFIX" \
    -e WHITE_LIST="$WHITE_LIST" --restart=always \
    denny/monitor-docker-slack:latest
 
@@ -47,7 +46,7 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock \
 docker logs "$container_name"
 ```
 
-# How To Use: Docker-compose
+# How To Use: docker-compose
 ```
 version: '2'
 services:
@@ -58,8 +57,7 @@ services:
      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       SLACK_CHANNEL: "#XXX"
-      SLACK_USERNAME: "XXX"
-      SLACK_TOKEN: "xoxp-XXX-XXX-XXX-XXXXXXXX"
+      SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/..."
       MSG_PREFIX: "Monitoring On XX.XX.XX.XX"
     restart: always
 ```
