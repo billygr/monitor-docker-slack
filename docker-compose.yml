@@ -2,7 +2,7 @@ version: '2'
 services:
   monitor-docker-slack:
     container_name: monitor-docker-slack
-    image: rafahsena/monitor-docker-slack:latest
+    image: denny/monitor-docker-slack
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
     environment:
