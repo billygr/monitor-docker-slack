@@ -6,6 +6,7 @@ services:
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      SLACK_CHANNEL: "#XXX"
       SLACK_WEBHOOK_URL: "$SLACK_WEBHOOK_URL"
       MSG_PREFIX: "$MSG_PREFIX"
     restart: always
