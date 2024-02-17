@@ -13,7 +13,7 @@
 ##################################################
 # Base Docker image: https://hub.docker.com/_/python/
 
-FROM python:3.8.5-alpine3.12
+FROM python:3.11-slim-buster
 
 ENV SLACK_WEBHOOK_URL ""
 
